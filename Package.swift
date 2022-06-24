@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "hello",
+    name: "game-server",
     platforms: [
        .macOS(.v12)
     ],
