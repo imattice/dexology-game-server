@@ -17,8 +17,6 @@ public enum GameManager {
         let game = GameHistory(index: index, selectedDate: Date())
 
         gameHistory.append(game)
-
-        dump(game)
     }
 
     /// Selects a random index
