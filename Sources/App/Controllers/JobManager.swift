@@ -21,6 +21,6 @@ public enum JobManager {
 
     private static func queueJobs(for app: Application) {
         let indexSelectJob = IndexSelectJob()
-        app.queues.schedule(indexSelectJob).everySecond() //.minutely().at(0)
+        app.queues.schedule(indexSelectJob).minutely().at(0)
     }
 }

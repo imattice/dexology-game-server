@@ -8,10 +8,8 @@
 import Vapor
 import Queues
 
-public struct IndexSelectJob: ScheduledJob {
-    public func run(context: QueueContext) -> EventLoopFuture<Void> {
-        GameManager.generateDaily()
-
-        return context.eventLoop.makeSucceededVoidFuture()
+public struct IndexSelectJob: AsyncScheduledJob {
+    public func run(context: QueueContext) async throws {
+        await GameManager.generateDaily(on: context.application.db)
     }
 }
