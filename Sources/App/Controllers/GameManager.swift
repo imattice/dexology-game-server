@@ -10,6 +10,22 @@ import Fluent
 
 /// A group of functions that manage a game
 public enum GameManager {
+    /// Fetches all history objects and returns the object that matches the given date
+    /// - Parameters:
+    ///   - date: the date to be matched
+    ///   - database: the data base to fetch the histories from
+    /// - Returns: the specific history that matches the given date
+    static func fetchGame(for date: Date, in database: Database) async -> GameHistory? {
+        do {
+            return try await GameHistory.query(on: database)
+                .all()
+                .first(where: { Calendar.current.dateComponents([.day], from: $0, to: date) })
+        } catch {
+            print("No game for date: \(date)")
+            return nil
+        }
+    }
+
     /// Fetches all history from the database
     /// - Parameter database: The database to fetch history
     /// - Returns: The fetched history
