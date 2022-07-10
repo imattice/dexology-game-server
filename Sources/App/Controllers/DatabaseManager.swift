@@ -23,6 +23,17 @@ public enum DatabaseManager {
         }
     }
 
+    public static func clearData(in database: Database) async {
+        do {
+            try await GameHistory.query(on: database).all().delete(on: database)
+            try await database.schema(GameHistory.schema).delete()
+
+            print("Database cleared!")
+        } catch {
+            print("failed to delete \(String(describing: GameHistory.self)) with error:\n\(error)")
+        }
+    }
+
     private static func setUpSchema(for database: Database) async {
         do {
         try await database.schema(GameHistory.schema)
