@@ -40,7 +40,7 @@ public enum DatabaseManager {
             .ignoreExisting()
             .id()
             .field("index", .int, .required)
-            .field("selected_date", .date, .required)
+            .field("selected_date", .string, .required)
             .create()
         } catch {
             print("failed to create schema with error: \(error)")

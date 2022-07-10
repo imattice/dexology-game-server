@@ -18,7 +18,14 @@ final class GameHistory: Model {
     @Field(key: "index")
     var index: Int
     @Field(key: "selected_date")
-    var selectedDate: Date
+    var selectedDate: String
+
+    static var dateFormatter: DateFormatter {
+        let formatter: DateFormatter = DateFormatter()
+        formatter.dateStyle = .short
+
+        return formatter
+    }
 
     init() { }
 
@@ -26,6 +33,6 @@ final class GameHistory: Model {
     init(id: UUID? = nil, index: Int, selectedDate: Date = Date()) {
         self.id = id
         self.index = index
-        self.selectedDate = selectedDate
+        self.selectedDate = GameHistory.dateFormatter.string(from: selectedDate)
     }
 }

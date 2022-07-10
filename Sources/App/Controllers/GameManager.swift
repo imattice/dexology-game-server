@@ -17,9 +17,12 @@ public enum GameManager {
     /// - Returns: the specific history that matches the given date
     static func fetchGame(for date: Date, in database: Database) async -> GameHistory? {
         do {
-            return try await GameHistory.query(on: database)
-                .all()
-                .first(where: { Calendar.current.dateComponents([.day], from: $0, to: date) })
+            let dateString = GameHistory.dateFormatter.string(from: date)
+            let histories = GameHistory.query(on: database)
+            let all = try await histories.all()
+            return all.first(where: {
+                $0.selectedDate == dateString
+            })
         } catch {
             print("No game for date: \(date)")
             return nil
@@ -47,7 +50,7 @@ public enum GameManager {
         }
         let buffer = histories.isEmpty ? [Int]() : histories[0...bufferSize - 1].map { $0.index }
         let index = selectIndex(excludingElementsIn: buffer)
-        let game = GameHistory(index: index, selectedDate: Date())
+        let game = GameHistory(index: index)
 
         do {
             _ = try await game.create(on: database)
