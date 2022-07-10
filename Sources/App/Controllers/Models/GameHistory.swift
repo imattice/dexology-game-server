@@ -7,8 +7,9 @@
 
 import Foundation
 import FluentPostgresDriver
+import Vapor
 
-final class GameHistory: Model {
+final class GameHistory: Model, Content, AsyncResponseEncodable {
     // Name of the table or collection.
     static let schema = "game_histories"
 

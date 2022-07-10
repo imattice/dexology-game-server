@@ -53,6 +53,9 @@ public enum GameManager {
         let game = GameHistory(index: index)
 
         do {
+            // TODO: Remove this clear on release
+            if try await GameHistory.query(on: database).count() > 5 { await DatabaseManager.clearData(in: database) }
+
             _ = try await game.create(on: database)
         } catch {
             print("failed to create game with error: \(game)")

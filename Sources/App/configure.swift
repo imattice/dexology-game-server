@@ -5,7 +5,9 @@ import FluentPostgresDriver
 
 // configures your application
 public func configure(_ app: Application) throws {
-    DatabaseManager.configure(for: app)
+    Task {
+        await DatabaseManager.configure(for: app)
+    }
 
     try JobManager.setUp(for: app)
 
