@@ -8,7 +8,7 @@
 /// Contains global configuration properties
 public enum Configuration {
     /// The highest possible index used in the application
-    public static let maxIndex: Int = 300
+    public static let maxIndex: Int = 10
     /// The number of days an index cannot be selected
     public static let bufferSize: Int = 30
 }

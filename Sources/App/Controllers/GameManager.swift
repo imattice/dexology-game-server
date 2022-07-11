@@ -7,6 +7,7 @@
 
 import Foundation
 import Fluent
+import Vapor
 
 /// A group of functions that manage a game
 public enum GameManager {
@@ -73,6 +74,78 @@ public enum GameManager {
             return selectIndex(excludingElementsIn: indexBuffer)
         } else {
             return index
+        }
+    }
+
+    public static func updateDataSource(with request: Request) async {
+        let dataSource = await fetchDataSource()
+
+        await save(dataSource: dataSource, with: request)
+    }
+
+    private static func fetchDataSource() async -> [Pokemon] {
+        let endpoint = "https://pokeapi.co/api/v2/pokemon/"
+        var dataSource = [Pokemon]()
+
+        for id in 1...Configuration.maxIndex + 1 {
+            guard let url = URL(string: endpoint + "\(id)") else {
+                // TODO: Handle error
+                print("failed to generate url from \(endpoint + "\(id)")")
+                continue
+            }
+            let request = URLRequest(url: url)
+
+            do {
+                let (data, _) = try await URLSession.shared.data(for: request)
+                // TODO: Handle response
+                let pokemon = try JSONDecoder().decode(PokemonAPIResponse.self, from: data)
+
+                dataSource.append(Pokemon(response: pokemon))
+            } catch {
+                // TODO: Handle error
+                print("failed to decode pokemon data with error: \(error)")
+                return [Pokemon]()
+            }
+        }
+        
+        dump(dataSource)
+
+        return dataSource
+    }
+
+    private static func convert(dataSource: [Pokemon]) -> String? {
+        do {
+            let encoded = try JSONEncoder().encode(dataSource)
+            return String(data: encoded, encoding: .utf8)
+        } catch {
+            // TODO: Handle error
+            print("could not convert data source to string")
+            return nil
+        }
+    }
+
+    private static func save(dataSource: [Pokemon], with request: Request) async {
+        let filePath: String = "Public/data-source.json"
+        guard let stringData: String = convert(dataSource: dataSource) else {
+            // TODO: Handle error
+
+            return
+        }
+
+        do {
+
+            try await request.fileio.writeFile(ByteBuffer(string: stringData), at: filePath)
+            _ = request.fileio.readFile(at: filePath, onRead: { buffer in
+                let json = String(buffer: buffer)
+                print(json)
+
+               return request.eventLoop.makeSucceededVoidFuture()
+            })
+
+        } catch {
+            print("failed to write to file: \(error)")
+
+            // TODO: Handle error
         }
     }
 }

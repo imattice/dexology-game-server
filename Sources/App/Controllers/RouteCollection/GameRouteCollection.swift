@@ -12,13 +12,20 @@ struct GameRouteCollection: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let collection = routes.grouped("game")
         collection.get("daily", use: fetchDaily)
+        collection.get("update-data-source", use: updateDataSource)
     }
 
-    func fetchDaily(with req: Request) async throws -> GameHistory {
-        guard let game = await GameManager.fetchGame(for: Date.now, in: req.db) else {
+    func fetchDaily(with request: Request) async throws -> GameHistory {
+        guard let game = await GameManager.fetchGame(for: Date.now, in: request.db) else {
             throw Abort(.internalServerError)
         }
         print("fetched game \(String(describing: game))")
         return game
+    }
+
+    func updateDataSource(with request: Request) async throws -> Response {
+        await GameManager.updateDataSource(with: request)
+
+        return Response(status: .ok)
     }
 }
