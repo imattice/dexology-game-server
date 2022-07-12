@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "game-server",
+    name: "dexology-game-server",
     platforms: [
        .macOS(.v12)
     ],
