@@ -11,6 +11,8 @@ import Vapor
 
 /// A group of functions that manage a game
 public enum GameManager {
+    private static let dataSourceFilePath: String = "Public/data-source.json"
+
     /// Fetches all history objects and returns the object that matches the given date
     /// - Parameters:
     ///   - date: the date to be matched
@@ -125,7 +127,6 @@ public enum GameManager {
     }
 
     private static func save(dataSource: [Pokemon], with request: Request) async {
-        let filePath: String = "Public/data-source.json"
         guard let stringData: String = convert(dataSource: dataSource) else {
             // TODO: Handle error
 
@@ -133,19 +134,21 @@ public enum GameManager {
         }
 
         do {
-
-            try await request.fileio.writeFile(ByteBuffer(string: stringData), at: filePath)
-            _ = request.fileio.readFile(at: filePath, onRead: { buffer in
-                let json = String(buffer: buffer)
-                print(json)
-
-               return request.eventLoop.makeSucceededVoidFuture()
-            })
+            try await request.fileio.writeFile(ByteBuffer(string: stringData), at: GameManager.dataSourceFilePath)
 
         } catch {
             print("failed to write to file: \(error)")
 
             // TODO: Handle error
+        }
+    }
+
+    static func readDataSource(with request: Request) async throws -> ByteBuffer {
+        do {
+            return try await request.fileio.collectFile(at: GameManager.dataSourceFilePath)
+        } catch {
+            // TODO: Handle Error
+            throw Abort(.internalServerError)
         }
     }
 }
