@@ -98,7 +98,7 @@ public enum GameManager {
             let request = URLRequest(url: url)
 
             do {
-                let (data, _) = try await URLSession.shared.data(for: request)
+                let (data, _): (Data, URLResponse) = try await URLSession.shared.data(for: request)
                 // TODO: Handle response
                 let pokemon = try JSONDecoder().decode(PokemonAPIResponse.self, from: data)
 
