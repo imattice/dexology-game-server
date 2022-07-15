@@ -17,7 +17,7 @@ struct GameRouteCollection: RouteCollection {
     }
 
     func fetchDaily(with request: Request) async throws -> GameHistory {
-        guard let game = await GameManager.fetchGame(for: Date.now, in: request.db) else {
+        guard let game = await GameManager.fetchGame(for: Date(), in: request.db) else {
             throw Abort(.internalServerError)
         }
         print("fetched game \(String(describing: game))")
